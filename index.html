@@ -4,84 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vocal 敬拜和聲魔法 | 教學系統</title>
-    
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        
-        :root {
-            --brand-blue: #2563eb;
-        }
-
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        /* 隱藏滾動條但保持功能 */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; overflow-x: hidden; }
         .animate-in { animation: slideUp 0.5s ease-out forwards; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #root:empty::after {
-            content: "系統讀取中...";
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-weight: 700; color: #94a3b8;
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #root:empty::after { content: "系統讀取中..."; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 700; color: #94a3b8; }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
 
-        // --- SVG 圖示組件 (已修正語法錯誤) ---
+        // --- 修復後的 Icon 組件 ---
         const Icon = ({ name, size = 24, className = "" }) => {
             const icons = {
-                Mic: (
-                    <>
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                        <line x1="12" x2="12" y1="19" y2="22"/>
-                    </>
-                ),
+                Mic: (<><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></>),
                 Zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>,
-                Book: (
-                    <>
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                    </>
-                ),
-                Home: (
-                    <>
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                    </>
-                ),
+                Home: (<><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>),
                 Check: <polyline points="20 6 9 17 4 12"/>,
                 ChevronRight: <path d="m9 18 6-6-6-6"/>,
-                Trophy: (
-                    <>
-                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                        <path d="M4 22h16"/>
-                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-                    </>
-                )
+                ChevronLeft: <path d="m15 18-6-6 6-6"/>,
+                Trophy: (<><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></>),
+                PlayCircle: (<><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></>),
+                HelpCircle: (<><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></>)
             };
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -90,125 +43,149 @@
             );
         };
 
+        // --- 完整的三單元數據 (含內容與測驗) ---
         const modulesData = [
             {
                 id: 'm1', title: '單元一：聽覺直覺訓練', description: '聽出大小三度的情感色彩',
                 slides: [
-                    { title: '大三度：陽光感', content: '像大門敞開，充滿盼望與喜樂。通常用於敬拜的大歌與宣告段落。' },
-                    { title: '小三度：月光感', content: '內斂且富有張力，適合渴慕、悔改或深情呼求的段落。' }
+                    { title: '聽出顏色的情緒', content: '大三度聽起來明亮開闊、像「陽光」\n小三度聽起來內斂柔和、像「月光」' },
+                    { title: '零基礎秘訣：跳格法', content: '主唱唱 Do (1)，你就往上跳一個音唱 Mi (3)。\n這是最安全、最好聽的平行層次。' }
                 ],
-                checks: ['能唱出 1-3-5 和弦', '能辨識大小調差異', '掌握平行三度走位']
+                quizzes: [
+                    { question: "當旋律進入「感性、流淚呼求」的段落，哪種色彩最適合？", options: ["大三度 (陽光)", "小三度 (月光)"], correct: 1 }
+                ],
+                checks: ['能辨識大小調差異', '掌握平行三度走位']
             },
             {
                 id: 'm2', title: '單元二：垂直 DNA 邏輯', description: '拆解和弦內部的安全成員',
                 slides: [
-                    { title: '1-3-5 結構', content: '和弦就像地基，1、3、5 是支撐房子的三根大柱，唱這三音最安全。' },
-                    { title: '救命音：根音', content: '當你不知道唱什麼，唱跟主旋律同步的和弦根音永遠是對的。' }
+                    { title: '救命音：根音 (1)', content: '當你迷路時，唱和弦的根音永遠是對的。\n它能讓整個敬拜團的聲音瞬間變穩定。' },
+                    { title: '1-3-5 的組合', content: '每個和弦都是一棟房子，只要唱出成員音，你就是安全的。' }
                 ],
-                checks: ['熟記 C-F-G 組成音', '掌握關鍵三音切換', '首拍對齊根音技術']
+                quizzes: [
+                    { question: "司琴彈了一個你沒練過的 B 和弦，最保險的做法是？", options: ["大聲唱根音 B", "停止歌唱"], correct: 0 }
+                ],
+                checks: ['首拍對齊根音技術', '熟記常用和弦組成']
+            },
+            {
+                id: 'm3', title: '單元三：流暢導進技術', description: '讓聲部像水流一樣連接',
+                slides: [
+                    { title: '共通音：最強膠水', content: '換和弦時，如果兩個和弦有重複的音，你的聲音就「停在那裡」不要動。' },
+                    { title: '避開大跳', content: '和聲應該像散步一樣級進移動，而不是像青蛙一樣跳來跳去。' }
+                ],
+                quizzes: [
+                    { question: "從 C (1-3-5) 換到 F (4-6-1)，哪一個是共通音？", options: ["音級 1 (Do)", "音級 3 (Mi)"], correct: 0 }
+                ],
+                checks: ['找出和弦共通音', '編寫平穩的線條']
             }
         ];
 
         function App() {
             const [view, setView] = useState('home');
+            const [currentModIdx, setCurrentModIdx] = useState(0);
+            const [currentSlide, setCurrentSlide] = useState(0);
+            const [isQuizMode, setIsQuizMode] = useState(false);
             const [progress, setProgress] = useState({});
 
-            const toggleCheck = (id) => {
-                setProgress(prev => ({ ...prev, [id]: !prev[id] }));
+            const enterModule = (idx) => {
+                setCurrentModIdx(idx);
+                setCurrentSlide(0);
+                setIsQuizMode(false);
+                setView('content');
             };
 
+            const handleNext = () => {
+                const mod = modulesData[currentModIdx];
+                if (!isQuizMode) {
+                    if (currentSlide < mod.slides.length - 1) setCurrentSlide(prev => prev + 1);
+                    else setIsQuizMode(true);
+                } else {
+                    setView('home'); // 測驗完回主頁
+                }
+            };
+
+            const toggleCheck = (id) => setProgress(p => ({ ...p, [id]: !p[id] }));
             const completedCount = Object.values(progress).filter(Boolean).length;
             const totalChecks = modulesData.reduce((acc, m) => acc + m.checks.length, 0);
 
             return (
                 <div className="min-h-screen pb-12">
-                    {/* 頂部導航 */}
-                    <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto">
-                        <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setView('home')}>
-                            <div className="bg-blue-600 p-2 rounded-xl text-white">
-                                <Icon name="Mic" size={20} />
-                            </div>
+                    <nav className="p-6 flex justify-between items-center max-w-5xl mx-auto cursor-pointer">
+                        <div className="flex items-center space-x-2" onClick={() => setView('home')}>
+                            <div className="bg-blue-600 p-2 rounded-xl text-white"><Icon name="Mic" size={20} /></div>
                             <span className="font-black text-xl tracking-tighter uppercase">Vocal Magic</span>
                         </div>
-                        {view !== 'home' && (
-                            <button onClick={() => setView('home')} className="px-4 py-2 rounded-full bg-white shadow-sm font-bold text-sm hover:bg-slate-50 transition-colors">返回首頁</button>
-                        )}
+                        {view !== 'home' && <button onClick={() => setView('home')} className="px-4 py-2 rounded-full bg-white shadow-sm font-bold text-sm">返回</button>}
                     </nav>
 
                     {view === 'home' && (
                         <main className="max-w-5xl mx-auto p-6 animate-in">
                             <header className="mb-12 text-center md:text-left">
-                                <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter">
-                                    讓你的聲音，<br/>成為<span className="text-blue-600">屬天的層次。</span>
-                                </h1>
-                                <p className="text-slate-500 text-lg font-medium">專為敬拜團 Vocal 設計的白話和聲訓練系統</p>
+                                <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter">讓你的聲音，成為<span className="text-blue-600">屬天的層次。</span></h1>
+                                <p className="text-slate-500 text-lg font-medium italic">專為敬拜團設計的白話教學系統</p>
                             </header>
-
-                            <div className="grid md:grid-cols-2 gap-6 mb-12">
-                                <div onClick={() => setView('learn')} className="group p-8 bg-slate-900 rounded-[2.5rem] text-white cursor-pointer hover:scale-[1.02] transition-all shadow-xl">
-                                    <Icon name="Zap" className="text-blue-400 mb-6" size={32} />
-                                    <h3 className="text-2xl font-bold mb-2">魔法單元課程</h3>
-                                    <p className="text-slate-400">從直覺到理論，三階段完整教學。</p>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                    <h2 className="text-2xl font-black mb-4 flex items-center"><Icon name="Zap" className="mr-2 text-blue-600" /> 選擇修煉單元</h2>
+                                    {modulesData.map((m, idx) => (
+                                        <div key={m.id} onClick={() => enterModule(idx)} className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-blue-500 hover:shadow-lg transition-all">
+                                            <div><span className="text-xs font-black text-blue-600 tracking-widest">MODULE 0{idx+1}</span><h4 className="text-xl font-bold">{m.title}</h4></div>
+                                            <Icon name="ChevronRight" />
+                                        </div>
+                                    ))}
                                 </div>
-                                <div onClick={() => setView('status')} className="p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] cursor-pointer hover:scale-[1.02] transition-all shadow-sm">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <Icon name="Trophy" className="text-amber-500" size={32} />
-                                        <span className="bg-slate-100 px-3 py-1 rounded-full text-xs font-black tracking-widest">
-                                            {totalChecks > 0 ? Math.round((completedCount/totalChecks)*100) : 0}%
-                                        </span>
-                                    </div>
-                                    <h3 className="text-2xl font-bold mb-2 text-slate-800">和聲修煉清單</h3>
-                                    <p className="text-slate-400">追蹤你的各項和音技術掌握狀況。</p>
+                                <div onClick={() => setView('status')} className="p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] cursor-pointer hover:shadow-xl transition-all h-fit">
+                                    <div className="flex justify-between items-start mb-6"><Icon name="Trophy" className="text-amber-500" size={32} /><span className="bg-blue-100 px-3 py-1 rounded-full text-blue-600 text-xs font-black">{Math.round((completedCount/totalChecks)*100)}%</span></div>
+                                    <h3 className="text-2xl font-bold mb-2">修煉總覽</h3>
+                                    <p className="text-slate-400">點擊查看已解鎖的技巧清單。</p>
                                 </div>
                             </div>
                         </main>
                     )}
 
-                    {view === 'learn' && (
-                        <div className="max-w-3xl mx-auto p-6 animate-in">
-                            <h2 className="text-3xl font-black mb-8">選擇修煉單元</h2>
-                            <div className="space-y-4">
-                                {modulesData.map((m, idx) => (
-                                    <div key={m.id} className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-blue-500 transition-all">
-                                        <div>
-                                            <span className="text-xs font-black text-blue-600 uppercase tracking-widest">Module 0{idx+1}</span>
-                                            <h4 className="text-xl font-bold text-slate-800">{m.title}</h4>
-                                        </div>
-                                        <div className="bg-slate-50 p-3 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-all">
-                                            <Icon name="ChevronRight" />
+                    {view === 'content' && (
+                        <div className="max-w-4xl mx-auto p-6 animate-in">
+                            <div className="bg-white rounded-[3rem] p-10 shadow-2xl border border-slate-100 min-h-[400px] flex flex-col">
+                                {!isQuizMode ? (
+                                    <div className="flex-grow">
+                                        <div className="flex items-center text-blue-600 font-black text-xs tracking-widest mb-6"><Icon name="PlayCircle" size={16} className="mr-2"/>教學投影片 {currentSlide + 1}</div>
+                                        <h2 className="text-4xl font-black mb-8 leading-tight">{modulesData[currentModIdx].slides[currentSlide].title}</h2>
+                                        <p className="text-2xl text-slate-600 leading-relaxed whitespace-pre-line font-medium italic">{modulesData[currentModIdx].slides[currentSlide].content}</p>
+                                    </div>
+                                ) : (
+                                    <div className="flex-grow">
+                                        <div className="flex items-center text-amber-500 font-black text-xs tracking-widest mb-6"><Icon name="HelpCircle" size={16} className="mr-2"/>隨堂測驗</div>
+                                        <h2 className="text-3xl font-black mb-10">{modulesData[currentModIdx].quizzes[0].question}</h2>
+                                        <div className="space-y-4">
+                                            {modulesData[currentModIdx].quizzes[0].options.map((opt, i) => (
+                                                <button key={i} onClick={handleNext} className="w-full p-6 bg-slate-50 rounded-2xl text-left font-bold text-xl hover:bg-blue-600 hover:text-white transition-all">{opt}</button>
+                                            ))}
                                         </div>
                                     </div>
-                                ))}
+                                )}
+                                {!isQuizMode && (
+                                    <div className="flex justify-between mt-10">
+                                        <button disabled={currentSlide === 0} onClick={() => setCurrentSlide(s => s - 1)} className="p-4 rounded-full bg-slate-100 disabled:opacity-20"><Icon name="ChevronLeft" /></button>
+                                        <button onClick={handleNext} className="px-10 py-4 bg-blue-600 text-white rounded-full font-black text-lg hover:scale-105 transition-all">繼續下一步</button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
 
                     {view === 'status' && (
                         <div className="max-w-3xl mx-auto p-6 animate-in">
-                            <h2 className="text-3xl font-black mb-8 text-center">我的和聲祕笈</h2>
-                            <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl mb-8">
-                                <div className="text-center mb-8">
-                                    <span className="text-6xl font-black">{completedCount}</span>
-                                    <span className="text-slate-300 mx-2 text-3xl">/</span>
-                                    <span className="text-slate-300 text-3xl font-bold">{totalChecks}</span>
-                                    <p className="text-slate-400 text-sm font-bold mt-2 uppercase tracking-widest">已解鎖技巧</p>
-                                </div>
+                            <h2 className="text-3xl font-black mb-8 text-center">和聲祕笈總覽</h2>
+                            <div className="bg-white p-8 rounded-[3rem] shadow-xl">
                                 {modulesData.map(m => (
-                                    <div key={m.id} className="mb-8 last:mb-0">
-                                        <h5 className="font-black text-slate-400 text-xs mb-4 uppercase tracking-[0.2em]">{m.title}</h5>
-                                        <div className="space-y-3">
-                                            {m.checks.map((c, i) => {
-                                                const cid = `${m.id}-${i}`;
-                                                return (
-                                                    <div key={cid} onClick={() => toggleCheck(cid)} className={`p-4 rounded-2xl flex items-center space-x-4 cursor-pointer transition-all ${progress[cid] ? 'bg-blue-50 text-blue-700' : 'bg-slate-50 text-slate-400 grayscale'}`}>
-                                                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border-2 transition-all ${progress[cid] ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'border-slate-300 bg-white'}`}>
-                                                            {progress[cid] && <Icon name="Check" size={14} />}
-                                                        </div>
-                                                        <span className="font-bold">{c}</span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
+                                    <div key={m.id} className="mb-8">
+                                        <h5 className="font-black text-slate-400 text-xs mb-4 uppercase tracking-widest border-b pb-2">{m.title}</h5>
+                                        {m.checks.map((c, i) => (
+                                            <div key={i} onClick={() => toggleCheck(`${m.id}-${i}`)} className={`p-4 rounded-2xl flex items-center space-x-4 cursor-pointer mb-2 transition-all ${progress[`${m.id}-${i}`] ? 'bg-blue-50 text-blue-700' : 'bg-slate-50 text-slate-400 grayscale'}`}>
+                                                <div className={`w-6 h-6 rounded-lg flex items-center justify-center border-2 ${progress[`${m.id}-${i}`] ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-300'}`}>{progress[`${m.id}-${i}`] && <Icon name="Check" size={14} />}</div>
+                                                <span className="font-bold">{c}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -218,20 +195,14 @@
             );
         }
 
-        // 確保掛載點存在後再啟動
-        const mountApp = () => {
-            const container = document.getElementById('root');
-            if (container) {
-                const root = ReactDOM.createRoot(container);
+        const startApp = () => {
+            const rootEl = document.getElementById('root');
+            if (rootEl) {
+                const root = ReactDOM.createRoot(rootEl);
                 root.render(<App />);
             }
         };
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', mountApp);
-        } else {
-            mountApp();
-        }
+        document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', startApp) : startApp();
     </script>
 </body>
 </html>
