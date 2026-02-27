@@ -147,7 +147,7 @@ const modulesData = [
 
                     {view === 'home' && (
                         <main className="max-w-5xl mx-auto p-6 animate-in">
-                            <h1 className="text-5xl font-black mb-12 tracking-tighter">我的<span className="text-blue-600">教學路徑</span></h1>
+                            <h1 className="text-5xl font-black mb-12 tracking-tighter">我的<span className="text-blue-600">學習路徑</span></h1>
                             <div className="grid md:grid-cols-2 gap-6">
                                 {modulesData.map((m, idx) => (
                                     <div key={m.id} onClick={() => enterModule(idx)} className={`p-8 rounded-[2.5rem] border-2 cursor-pointer transition-all ${progress[m.id] ? 'bg-blue-50 border-blue-200' : 'bg-white border-slate-100 hover:border-blue-500'}`}>
